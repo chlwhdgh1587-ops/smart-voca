@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>오늘의 학습</h1>
+<ul class="status">
+  <li>등록 단어 <strong>{{ status.word_count }}</strong>개</li>
+  <li>복습 대상 <strong>{{ status.review_count }}</strong>개</li>
+  <li>오늘 신규 남은 목표 <strong>{{ status.new_remaining }}</strong>개</li>
+</ul>
+{% if not status.can_study %}
+  <p>서로 다른 뜻의 단어를 4개 이상 등록해야 학습을 시작할 수 있습니다.</p>
+  <a class="button" href="{{ url_for('words_page') }}">단어 관리</a>
+{% else %}
+  <a class="button primary" href="{{ url_for('study') }}">학습 시작</a>
+{% endif %}
+{% endblock %}

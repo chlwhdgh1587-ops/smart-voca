@@ -1,0 +1,151 @@
+/* 2026-10-21 - 스마트보카 - 교실용 화면 스타일 (UI 설계서 5절 표시 규칙) */
+/* 파일 위치: src/static/style.css */
+
+body {
+  margin: 0;
+  font-family: "Malgun Gothic", sans-serif;
+  font-size: 18px;
+  color: #222;
+  background: #fafafa;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #2b4c7e;
+  color: #fff;
+}
+
+.topbar a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 16px;
+}
+
+.brand {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+main {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.flash {
+  padding: 10px 14px;
+  background: #fff4cc;
+  border-radius: 6px;
+}
+
+.button {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 6px 6px 6px 0;
+  font-size: 18px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  color: #222;
+}
+
+.button.primary {
+  background: #2b4c7e;
+  border-color: #2b4c7e;
+  color: #fff;
+}
+
+.danger {
+  color: #b00020;
+}
+
+.status li {
+  font-size: 20px;
+  margin: 8px 0;
+}
+
+.study .progress {
+  color: #555;
+}
+
+.study .english {
+  font-size: 56px;
+  font-weight: bold;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.choice {
+  padding: 18px;
+  font-size: 22px;
+  border: 2px solid #999;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.choice:disabled {
+  cursor: default;
+}
+
+.choice.correct {
+  background: #d7f5dd;
+  border-color: #1b7a34;
+}
+
+.choice.wrong {
+  background: #fbd9dc;
+  border-color: #b00020;
+}
+
+.result {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: bold;
+  min-height: 1.5em;
+}
+
+.result.correct {
+  color: #1b7a34;
+}
+
+.result.wrong {
+  color: #b00020;
+}
+
+.word-form label,
+.inline-form {
+  display: inline-block;
+  margin: 4px 8px 4px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th,
+td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+input {
+  font-size: 16px;
+  padding: 6px;
+  margin-right: 4px;
+}

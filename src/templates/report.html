@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>학습 기록</h1>
+{% if daily %}
+<table class="report-table">
+  <thead>
+    <tr><th>날짜</th><th>학습 단어</th><th>문제 수</th><th>정답률</th></tr>
+  </thead>
+  <tbody>
+    {% for row in daily %}
+    <tr>
+      <td>{{ row.date }}</td>
+      <td>{{ row.learned }}</td>
+      <td>{{ row.attempts }}</td>
+      <td>{% if row.rate is none %}기록 없음{% else %}{{ "%.1f"|format(row.rate) }} %{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>아직 학습 기록이 없습니다.</p>
+{% endif %}
+<p>완벽 암기 <strong>{{ mastery.mastered }}</strong>개 · 복습 대기 <strong>{{ mastery.review_pending }}</strong>개</p>
+<a class="button" href="{{ url_for('home') }}">홈으로</a>
+{% endblock %}

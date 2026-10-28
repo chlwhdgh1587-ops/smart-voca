@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="study" data-word-id="{{ question.word_id }}">
+  <p class="progress">{{ question.block_label }} {{ question.block_done + 1 }}/{{ question.block_total }}</p>
+  <p class="english">{{ question.english }}</p>
+  <div class="choices">
+    {% for option in question.options %}
+      <button type="button" class="choice" data-meaning="{{ option }}">{{ loop.index }}. {{ option }}</button>
+    {% endfor %}
+  </div>
+  <p id="result" class="result" role="status"></p>
+  <button type="button" id="next" class="button primary" hidden>다음</button>
+</section>
+<script>
+(function () {
+  const wordId = Number(document.querySelector('.study').dataset.wordId);
+  const choices = Array.from(document.querySelectorAll('.choice'));
+  const result = document.getElementById('result');
+  const nextButton = document.getElementById('next');
+  let answering = false;
+  let sessionFinished = false;
+
+  function showResult(data, chosen) {
+    choices.forEach(function (button) {
+      if (button.dataset.meaning === data.correct_meaning) {
+        button.classList.add('correct');
+      }
+    });
+    if (!data.correct) {
+      chosen.classList.add('wrong');
+      result.className = 'result wrong';
+      result.textContent = '오답입니다. 정답: ' + data.correct_meaning + ' (이 세션 안에서 다시 나옵니다)';
+    } else {
+      result.className = 'result correct';
+      result.textContent = '정답입니다.';
+    }
+    sessionFinished = data.session_finished;
+    nextButton.hidden = false;
+    nextButton.focus();
+  }
+
+  async function submit(chosen) {
+    if (answering) return;
+    answering = true;
+    choices.forEach(function (button) { button.disabled = true; });
+    const response = await fetch('/api/study/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ word_id: wordId, selected_meaning: chosen.dataset.meaning })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      result.className = 'result wrong';
+      result.textContent = data.error;
+      choices.forEach(function (button) { button.disabled = false; });
+      answering = false;
+      return;
+    }
+    showResult(data, chosen);
+  }
+
+  choices.forEach(function (button) {
+    button.addEventListener('click', function () { submit(button); });
+  });
+
+  nextButton.addEventListener('click', function () {
+    if (sessionFinished) {
+      location.href = '/study/done';
+    } else {
+      location.reload();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (!answering && /^[1-4]$/.test(event.key)) {
+      const button = choices[Number(event.key) - 1];
+      if (button) submit(button);
+    } else if (!nextButton.hidden && event.key === 'Enter') {
+      nextButton.click();
+    }
+  });
+})();
+</script>
+{% endblock %}

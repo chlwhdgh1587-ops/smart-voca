@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>단어 관리</h1>
+<form method="post" action="{{ url_for('add_word_page') }}" class="word-form">
+  <label>영어 <input name="english" required></label>
+  <label>뜻 <input name="meaning" required></label>
+  <label>예문(선택) <input name="example"></label>
+  <button type="submit" class="button primary">등록</button>
+</form>
+
+<table class="word-table">
+  <thead>
+    <tr><th>#</th><th>영어</th><th>뜻</th><th>예문</th><th>관리</th></tr>
+  </thead>
+  <tbody>
+    {% for word in words %}
+    <tr>
+      <td>{{ word.id }}</td>
+      <td colspan="4">
+        <form method="post" action="{{ url_for('edit_word_page', word_id=word.id) }}" class="inline-form">
+          <input name="english" value="{{ word.english }}" required>
+          <input name="meaning" value="{{ word.meaning }}" required>
+          <input name="example" value="{{ word.example or '' }}">
+          <button type="submit">수정</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_word_page', word_id=word.id) }}" class="inline-form"
+              onsubmit="return confirm('단어를 삭제하면 관련 학습 기록도 함께 삭제됩니다. 계속할까요?');">
+          <button type="submit" class="danger">삭제</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">등록된 단어가 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
