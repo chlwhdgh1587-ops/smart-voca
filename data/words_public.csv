@@ -1,101 +1,101 @@
-english,meaning
-apple,사과
-banana,바나나
-cherry,체리
-grape,포도
-lemon,레몬
-orange,오렌지
-melon,멜론
-peach,복숭아
-pear,배
-strawberry,딸기
-book,책
-pen,펜
-pencil,연필
-eraser,지우개
-desk,책상
-chair,의자
-door,문
-window,창문
-wall,벽
-floor,바닥
-school,학교
-teacher,선생님
-student,학생
-friend,친구
-family,가족
-mother,어머니
-father,아버지
-sister,여자 형제
-brother,남자 형제
-baby,아기
-child,아이
-man,남자
-woman,여자
-boy,소년
-girl,소녀
-dog,개
-cat,고양이
-bird,새
-fish,물고기
-horse,말
-cow,소
-pig,돼지
-rabbit,토끼
-tiger,호랑이
-lion,사자
-water,물
-milk,우유
-bread,빵
-rice,밥
-egg,달걀
-meat,고기
-cheese,치즈
-tea,차
-coffee,커피
-red,빨간색
-blue,파란색
-green,초록색
-yellow,노란색
-black,검은색
-white,흰색
-big,큰
-small,작은
-hot,뜨거운
-cold,차가운
-happy,행복한
-sad,슬픈
-fast,빠른
-slow,느린
-new,새로운
-old,오래된
-good,좋은
-bad,나쁜
-run,달리다
-walk,걷다
-eat,먹다
-drink,마시다
-read,읽다
-write,쓰다
-sleep,자다
-open,열다
-close,닫다
-sit,앉다
-stand,서다
-jump,뛰다
-swim,수영하다
-sing,노래하다
-dance,춤추다
-think,생각하다
-know,알다
-want,원하다
-give,주다
-take,가져가다
-make,만들다
-buy,사다
-sell,팔다
-come,오다
-go,가다
-see,보다
-look,바라보다
-listen,듣다
+english,meaning,example
+available,이용 가능한,The conference room is available after 3 p.m.
+schedule,일정,The manager will schedule a meeting for Monday morning.
+deadline,마감 기한,The deadline for the monthly report is this Friday.
+meeting,회의,We have a meeting with the sales team at ten.
+budget,예산,The department has a limited budget for travel this year.
+invoice,청구서,Please send the invoice to our accounting office by Friday.
+colleague,동료,My colleague helped me finish the project on time.
+customer,고객,Our customers can contact us through the website.
+employee,직원,Every employee must wear an ID badge in the building.
+manager,관리자,The manager approved the new vacation schedule.
+department,부서,She transferred to the marketing department last month.
+position,직책,He applied for a senior position in the finance team.
+promote,승진시키다,The company promoted her to team leader after two years.
+recruit,채용하다,The firm plans to recruit ten new engineers this spring.
+applicant,지원자,Each applicant must submit a resume and a cover letter.
+resume,이력서,Please attach your resume to the online application form.
+interview,면접,The interview will take place in Room 402.
+salary,급여,His salary increased after he completed the training program.
+benefit,복리후생,Health insurance is one of the main benefits of this job.
+retire,은퇴하다,My father plans to retire at the age of sixty.
+contract,계약서,The contract will be valid for two years.
+agreement,합의,Both companies reached an agreement after a long discussion.
+proposal,제안서,The team submitted a proposal for a new marketing campaign.
+report,보고서,The sales report shows a steady increase in revenue.
+revise,수정하다,Please revise the draft before sending it to the client.
+approve,승인하다,The director approved the purchase of new computers.
+reject,거절하다,The committee rejected the proposal because of high costs.
+submit,제출하다,Please submit your expense report by the end of the week.
+confirm,확인하다,Please confirm your attendance at the workshop by Monday.
+cancel,취소하다,The flight was canceled because of heavy snow.
+reserve,예약하다,I would like to reserve a table for four people.
+postpone,연기하다,The company decided to postpone the product launch until June.
+extend,연장하다,The library will extend its opening hours during exam week.
+attend,참석하다,All new staff members must attend the orientation session.
+arrange,준비하다,Can you arrange a meeting room for tomorrow afternoon?
+negotiate,협상하다,The two sides will negotiate the terms of the deal next week.
+launch,출시하다,The company will launch its new smartphone in March.
+expand,확장하다,The store plans to expand into overseas markets next year.
+increase,증가하다,Gas prices continued to increase throughout the summer.
+decline,감소하다,Sales declined sharply during the economic slowdown.
+revenue,매출,Annual revenue rose by fifteen percent compared to last year.
+profit,이익,The company reported a large profit in the third quarter.
+expense,비용,Travel expenses will be reimbursed after you submit the receipts.
+estimate,견적,The contractor gave us an estimate for the repairs.
+discount,할인,Students receive a ten percent discount on all tickets.
+purchase,구입하다,The customer made a purchase using a credit card.
+order,주문하다,I placed an order for office supplies this morning.
+deliver,배달하다,The package will be delivered within two business days.
+shipment,배송품,The shipment of parts was delayed by the storm.
+inventory,재고,The store must check its inventory at the end of each month.
+warehouse,창고,The goods are stored in a large warehouse near the port.
+supplier,공급업체,We are looking for a new supplier of raw materials.
+quality,품질,The quality of the product meets international standards.
+defect,결함,The inspector found a defect in the wiring of the device.
+improve,개선하다,The new software should improve our work efficiency.
+efficient,효율적인,The new system is more efficient than the old one.
+productive,생산적인,The team was very productive during the three-day workshop.
+mandatory,의무적인,Safety training is mandatory for all factory workers.
+regulation,규정,The new regulation applies to all companies in the city.
+policy,정책,The company changed its vacation policy this year.
+procedure,절차,Follow the procedure to request a refund.
+require,요구하다,This position requires at least three years of experience.
+qualify,자격을 얻다,Applicants must have a degree to qualify for the job.
+experience,경력,She has five years of experience in customer service.
+skill,기술,Good communication skills are important for this role.
+training,교육,New employees attend training on their first day.
+certificate,자격증,He received a certificate after completing the course.
+analyze,분석하다,The analysts analyze sales data every quarter.
+evaluate,평가하다,Managers evaluate employee performance once a year.
+performance,성과,Her performance in the sales contest was outstanding.
+achieve,달성하다,The team achieved its goal ahead of schedule.
+accomplish,성취하다,We accomplished a great deal during the first half of the year.
+complete,완료하다,Please complete the survey before leaving the office.
+specific,구체적인,Please give me a specific date for the delivery.
+complimentary,무료의,Breakfast is complimentary for all hotel guests.
+eligible,자격이 있는,Full-time employees are eligible for the annual bonus.
+reimburse,환급하다,The company will reimburse you for the taxi fare.
+subscribe,구독하다,Many readers subscribe to the magazine online.
+renovate,개조하다,The office will be renovated during the summer holiday.
+relocate,이전하다,The firm will relocate its headquarters to Busan next year.
+vacant,비어 있는,The office on the third floor is vacant.
+spacious,넓은,The apartment is spacious and has large windows.
+convenient,편리한,The subway station is convenient for commuters.
+nearby,근처의,There is a good restaurant nearby.
+sufficient,충분한,We have sufficient funds to cover the project costs.
+temporary,임시의,The company hired temporary workers for the busy season.
+permanent,정규직의,She got a permanent position after the internship.
+urgent,긴급한,The client sent an urgent request for more information.
+frequently,자주,The manager frequently visits the branch offices.
+immediately,즉시,Please notify me immediately if the schedule changes.
+currently,현재,We are currently reviewing the new design.
+overall,전반적인,The overall cost of the project is lower than expected.
+previously,이전에,The product was previously sold only in Korea.
+instead,대신에,Let us hold the meeting online instead.
+besides,게다가,Besides the salary the job offers free lunch.
+nevertheless,그럼에도 불구하고,The price is high and nevertheless many customers still buy it.
+incentive,장려금,The company offers an incentive to employees who meet their targets.
+landlord,집주인,The landlord agreed to repair the heating system.
+tenant,세입자,The tenant must pay the rent by the first of each month.
+forecast,예측,The weather forecast predicts heavy snow tomorrow.

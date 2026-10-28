@@ -4,7 +4,7 @@
 # 파일 위치: src/seed_words.py
 #
 # 사용법: python src/seed_words.py [CSV 경로]
-# CSV 열: english, meaning (UTF-8)
+# CSV 열: english, meaning, example (UTF-8, example은 선택)
 
 import csv
 import sys
@@ -22,7 +22,12 @@ def load_words(conn, csv_path):
     with open(csv_path, encoding="utf-8-sig", newline="") as csv_file:
         for row in csv.DictReader(csv_file):
             try:
-                word_service.add_word(conn, row.get("english", ""), row.get("meaning", ""))
+                word_service.add_word(
+                    conn,
+                    row.get("english", ""),
+                    row.get("meaning", ""),
+                    row.get("example"),
+                )
                 added += 1
             except word_service.DuplicateWordError:
                 skipped += 1
