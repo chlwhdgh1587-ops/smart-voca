@@ -1,24 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="study" data-word-id="{{ question.word_id }}">
-  <p class="progress">{{ question.block_label }} {{ question.block_done + 1 }}/{{ question.block_total }}</p>
+<section class="card study" data-word-id="{{ question.word_id }}" data-english="{{ question.english }}">
+  <div class="study-top">
+    <span class="chip {% if question.block == 'review' %}review{% endif %}">{{ question.block_label }}</span>
+    <p class="progress">{{ question.block_done + 1 }} / {{ question.block_total }}</p>
+  </div>
+  <div class="progress-bar"><span style="width: {{ (question.block_done * 100 // question.block_total) if question.block_total else 0 }}%"></span></div>
+
   <p class="english">{{ question.english }}</p>
+  <p class="muted">알맞은 뜻을 고르세요</p>
+
   <div class="choices">
     {% for option in question.options %}
-      <button type="button" class="choice" data-meaning="{{ option }}">{{ loop.index }}. {{ option }}</button>
+      <button type="button" class="choice" data-meaning="{{ option }}">
+        <span class="keycap">{{ loop.index }}</span>
+        <span>{{ option }}</span>
+      </button>
     {% endfor %}
   </div>
+
   <p id="result" class="result" role="status"></p>
-  <button type="button" id="next" class="button primary" hidden>다음</button>
+  <p id="example" class="example" hidden></p>
+
+  <div class="study-actions">
+    <button type="button" id="next" class="button primary large" hidden>다음 →</button>
+    <span class="hint" id="hint">숫자 1~4로 답하기</span>
+  </div>
 </section>
 <script>
 (function () {
-  const wordId = Number(document.querySelector('.study').dataset.wordId);
+  const section = document.querySelector('.study');
+  const wordId = Number(section.dataset.wordId);
+  const englishWord = section.dataset.english;
   const choices = Array.from(document.querySelectorAll('.choice'));
   const result = document.getElementById('result');
+  const example = document.getElementById('example');
   const nextButton = document.getElementById('next');
+  const hint = document.getElementById('hint');
   let answering = false;
   let sessionFinished = false;
+
+  // 예문에서 학습 단어를 표시한다. 텍스트만 쓰므로 HTML 삽입 위험이 없다.
+  function renderExample(sentence, word) {
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    example.replaceChildren();
+    sentence.split(new RegExp('(' + escaped + ')', 'i')).forEach(function (part, index) {
+      if (index % 2 === 1) {
+        const mark = document.createElement('mark');
+        mark.textContent = part;
+        example.appendChild(mark);
+      } else {
+        example.appendChild(document.createTextNode(part));
+      }
+    });
+    example.hidden = false;
+  }
 
   function showResult(data, chosen) {
     choices.forEach(function (button) {
@@ -29,12 +65,16 @@
     if (!data.correct) {
       chosen.classList.add('wrong');
       result.className = 'result wrong';
-      result.textContent = '오답입니다. 정답: ' + data.correct_meaning + ' (이 세션 안에서 다시 나옵니다)';
+      result.textContent = '오답입니다. 정답은 "' + data.correct_meaning + '" — 이 세션 안에서 다시 나옵니다';
     } else {
       result.className = 'result correct';
-      result.textContent = '정답입니다.';
+      result.textContent = '정답입니다!';
+    }
+    if (data.example) {
+      renderExample(data.example, englishWord);
     }
     sessionFinished = data.session_finished;
+    hint.textContent = 'Enter로 넘기기';
     nextButton.hidden = false;
     nextButton.focus();
   }

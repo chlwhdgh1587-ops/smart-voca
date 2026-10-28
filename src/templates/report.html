@@ -1,25 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>학습 기록</h1>
-{% if daily %}
-<table class="report-table">
-  <thead>
-    <tr><th>날짜</th><th>학습 단어</th><th>문제 수</th><th>정답률</th></tr>
-  </thead>
-  <tbody>
-    {% for row in daily %}
-    <tr>
-      <td>{{ row.date }}</td>
-      <td>{{ row.learned }}</td>
-      <td>{{ row.attempts }}</td>
-      <td>{% if row.rate is none %}기록 없음{% else %}{{ "%.1f"|format(row.rate) }} %{% endif %}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>아직 학습 기록이 없습니다.</p>
-{% endif %}
-<p>완벽 암기 <strong>{{ mastery.mastered }}</strong>개 · 복습 대기 <strong>{{ mastery.review_pending }}</strong>개</p>
+<div class="summary-row">
+  <div class="stat">
+    <div class="stat-label">완벽 암기</div>
+    <div class="stat-value">{{ mastery.mastered }}<small> 개</small></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">복습 대기</div>
+    <div class="stat-value">{{ mastery.review_pending }}<small> 개</small></div>
+  </div>
+</div>
+
+<section class="card">
+  <h2>날짜별 학습량</h2>
+  {% if daily %}
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead>
+        <tr><th>날짜</th><th>학습 단어</th><th>문제 수</th><th>정답률</th></tr>
+      </thead>
+      <tbody>
+        {% for row in daily %}
+        <tr>
+          <td>{{ row.date }}</td>
+          <td>{{ row.learned }}</td>
+          <td>{{ row.attempts }}</td>
+          <td>{% if row.rate is none %}-{% else %}{{ "%.1f"|format(row.rate) }} %{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">아직 학습 기록이 없습니다. 첫 학습을 시작해 보세요.</p>
+  {% endif %}
+</section>
 <a class="button" href="{{ url_for('home') }}">홈으로</a>
 {% endblock %}

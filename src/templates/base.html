@@ -8,8 +8,9 @@
 </head>
 <body>
   <header class="topbar">
-    <a href="{{ url_for('home') }}" class="brand">스마트보카</a>
+    <a href="{{ url_for('home') }}" class="brand"><span class="brand-mark">S</span>스마트보카</a>
     <nav>
+      <a href="{{ url_for('study') }}">학습</a>
       <a href="{{ url_for('words_page') }}">단어 관리</a>
       <a href="{{ url_for('report_page') }}">학습 기록</a>
     </nav>
@@ -17,7 +18,7 @@
   <main>
     {% with messages = get_flashed_messages() %}
       {% for message in messages %}
-        <p class="flash">{{ message }}</p>
+        <p class="flash">✓ {{ message }}</p>
       {% endfor %}
     {% endwith %}
     {% block content %}{% endblock %}
