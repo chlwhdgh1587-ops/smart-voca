@@ -117,6 +117,7 @@ def home_status(conn, today):
         "can_study": _count_distinct_meanings(conn) >= CHOICE_COUNT,
         "review_count": len(_review_candidate_ids(conn, today)),
         "new_remaining": new_target_remaining(conn, today),
+        "daily_target": DAILY_NEW_TARGET,
         "new_available": new_available,
     }
 
@@ -190,7 +191,7 @@ def _make_question(conn, block, rng):
     """블록 큐 맨 앞 단어로 문제를 만든다. 단어가 사라졌으면 큐에서 빼고 None을 돌려준다."""
     word_id = block.queue[0]
     row = conn.execute(
-        "SELECT id, english, meaning FROM word WHERE id = ?", (word_id,)
+        "SELECT id, english, meaning, example FROM word WHERE id = ?", (word_id,)
     ).fetchone()
     if row is None:
         block.queue.pop(0)
@@ -200,6 +201,7 @@ def _make_question(conn, block, rng):
     return {
         "word_id": word_id,
         "english": row["english"],
+        "example": row["example"],
         "correct_meaning": row["meaning"],
         "options": options,
         "block": block.name,
@@ -309,6 +311,7 @@ def submit_answer(conn, word_id, selected_meaning, today):
     return {
         "correct": is_correct,
         "correct_meaning": question["correct_meaning"],
+        "example": question["example"],
         "session_finished": session_finished,
         "session_id": active.session_id,
     }
