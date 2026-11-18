@@ -148,6 +148,7 @@ class StudyServiceTest(unittest.TestCase):
                 self.conn, question["word_id"], question["correct_meaning"], DAY2
             )
             self.assertEqual(result["review_continues"], streak_before + 1 < study_service.MASTERY_STREAK)
+            self.assertEqual(result["review_mastered"], streak_before + 1 >= study_service.MASTERY_STREAK)
             if result["session_finished"]:
                 break
 
