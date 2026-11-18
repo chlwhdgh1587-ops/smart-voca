@@ -1,0 +1,26 @@
+[
+  {
+    "page": "/",
+    "viewport": 390,
+    "documentWidth": 390,
+    "overflow": false
+  },
+  {
+    "page": "/study",
+    "viewport": 390,
+    "documentWidth": 390,
+    "overflow": false
+  },
+  {
+    "page": "/words",
+    "viewport": 390,
+    "documentWidth": 390,
+    "overflow": false
+  },
+  {
+    "page": "/report",
+    "viewport": 390,
+    "documentWidth": 390,
+    "overflow": false
+  }
+]
