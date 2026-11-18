@@ -139,6 +139,7 @@ class StudyServiceTest(unittest.TestCase):
         active = study_service.resume_or_start_session(self.conn, DAY1)
         self.answer_all_correctly(active, DAY1)
         active = study_service.resume_or_start_session(self.conn, DAY2)
+        block_done_flags = []
         while True:
             question = study_service.current_question(self.conn, active, self.rng)
             if question is None:
@@ -148,17 +149,21 @@ class StudyServiceTest(unittest.TestCase):
                 self.conn, question["word_id"], question["correct_meaning"], DAY2
             )
             self.assertEqual(result["review_continues"], streak_before + 1 < study_service.MASTERY_STREAK)
-            self.assertEqual(result["review_mastered"], streak_before + 1 >= study_service.MASTERY_STREAK)
+            block_done_flags.append(result["review_block_done"])
             if result["session_finished"]:
                 break
+        # 복습 블록 전체가 끝난 마지막 답에서만 완료 플래그가 켜진다
+        self.assertEqual(block_done_flags.count(True), 1)
+        self.assertTrue(block_done_flags[-1])
 
     def test_new_block_answer_has_no_review_flag(self):
-        # 신규 블록에서는 복습 안내 플래그가 켜지지 않는다
+        # 신규 블록에서는 복습 안내와 복습 완료 플래그가 켜지지 않는다
         self.add_words()
         active = study_service.resume_or_start_session(self.conn, DAY1)
         question = study_service.current_question(self.conn, active, self.rng)
         result = study_service.submit_answer(self.conn, question["word_id"], question["correct_meaning"], DAY1)
         self.assertFalse(result["review_continues"])
+        self.assertFalse(result["review_block_done"])
 
     def test_review_targets_are_released_after_review_block(self):
         # FR-03.3: 복습 블록이 끝나면 복습 대상에서 해제된다

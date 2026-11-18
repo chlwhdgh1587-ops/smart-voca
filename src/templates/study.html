@@ -68,7 +68,7 @@
       result.textContent = '오답입니다. 정답은 "' + data.correct_meaning + '" — 이 세션 안에서 다시 나옵니다';
     } else {
       result.className = 'result correct';
-      if (data.review_mastered) {
+      if (data.review_block_done) {
         result.textContent = '정답입니다! 복습이 끝났습니다';
       } else if (data.review_continues) {
         result.textContent = '정답입니다! 연속 3번 맞혀야 복습이 끝납니다';
