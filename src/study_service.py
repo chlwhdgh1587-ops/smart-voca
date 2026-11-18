@@ -307,11 +307,13 @@ def submit_answer(conn, word_id, selected_meaning, today):
     active.current = None
     active.answered += 1
     active.correct += int(is_correct)
+    review_continues = is_correct and block.name == BLOCK_REVIEW and new_streak < MASTERY_STREAK
     session_finished = not _prepare_next(conn, active)
     return {
         "correct": is_correct,
         "correct_meaning": question["correct_meaning"],
         "example": question["example"],
+        "review_continues": review_continues,
         "session_finished": session_finished,
         "session_id": active.session_id,
     }

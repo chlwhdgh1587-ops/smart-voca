@@ -133,6 +133,32 @@ class StudyServiceTest(unittest.TestCase):
         for english, _ in WORDS:
             self.assertEqual(self.state(english)["consecutive_correct"], 3)
 
+    def test_review_answer_flags_continue_until_third_in_a_row(self):
+        # FR-03.2: 복습 블록에서 맞혀도 연속 3회 전까지는 안내 플래그가 켜진다
+        self.add_words()
+        active = study_service.resume_or_start_session(self.conn, DAY1)
+        self.answer_all_correctly(active, DAY1)
+        active = study_service.resume_or_start_session(self.conn, DAY2)
+        while True:
+            question = study_service.current_question(self.conn, active, self.rng)
+            if question is None:
+                break
+            streak_before = self.state(question["english"])["consecutive_correct"]
+            result = study_service.submit_answer(
+                self.conn, question["word_id"], question["correct_meaning"], DAY2
+            )
+            self.assertEqual(result["review_continues"], streak_before + 1 < study_service.MASTERY_STREAK)
+            if result["session_finished"]:
+                break
+
+    def test_new_block_answer_has_no_review_flag(self):
+        # 신규 블록에서는 복습 안내 플래그가 켜지지 않는다
+        self.add_words()
+        active = study_service.resume_or_start_session(self.conn, DAY1)
+        question = study_service.current_question(self.conn, active, self.rng)
+        result = study_service.submit_answer(self.conn, question["word_id"], question["correct_meaning"], DAY1)
+        self.assertFalse(result["review_continues"])
+
     def test_review_targets_are_released_after_review_block(self):
         # FR-03.3: 복습 블록이 끝나면 복습 대상에서 해제된다
         self.add_words()
