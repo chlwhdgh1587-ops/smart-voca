@@ -50,7 +50,7 @@ def create_app(db_path=None):
             active = study_service.resume_or_start_session(conn, today_string())
             question = study_service.current_question(conn, active) if active else None
         except study_service.StudyError as error:
-            flash(str(error))
+            flash(str(error), "error")
             return redirect(url_for("home"))
         if question is None:
             if active is None:
@@ -100,7 +100,7 @@ def create_app(db_path=None):
             )
             flash("단어를 등록했습니다.")
         except word_service.WordError as error:
-            flash(str(error))
+            flash(str(error), "error")
         return redirect(url_for("words_page"))
 
     @app.route("/words/<int:word_id>/edit", methods=["POST"])
@@ -115,7 +115,7 @@ def create_app(db_path=None):
             )
             flash("단어를 수정했습니다.")
         except word_service.WordError as error:
-            flash(str(error))
+            flash(str(error), "error")
         return redirect(url_for("words_page"))
 
     @app.route("/words/<int:word_id>/delete", methods=["POST"])
@@ -124,7 +124,7 @@ def create_app(db_path=None):
             word_service.delete_word(get_db(), word_id)
             flash("단어를 삭제했습니다.")
         except word_service.WordError as error:
-            flash(str(error))
+            flash(str(error), "error")
         return redirect(url_for("words_page"))
 
     @app.route("/report")

@@ -11,7 +11,7 @@
     </div>
     <div class="stat">
       <div class="stat-label">정답률</div>
-      <div class="stat-value">{% if summary.rate is none %}-{% else %}{{ "%.0f"|format(summary.rate) }}<small> %</small>{% endif %}</div>
+      <div class="stat-value">{% if summary.rate is none %}-{% else %}{{ "%.1f"|format(summary.rate) }}<small> %</small>{% endif %}</div>
     </div>
     <div class="stat">
       <div class="stat-label">완벽 암기</div>

@@ -168,6 +168,11 @@ h1 {
   animation: pop 0.3s ease-out;
 }
 
+.flash.error {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
 @keyframes pop {
   from { transform: translateY(-6px); opacity: 0; }
   to { transform: none; opacity: 1; }
