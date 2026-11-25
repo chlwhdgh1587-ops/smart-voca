@@ -38,7 +38,7 @@
   <div class="word-item">
     <form id="edit-{{ word.id }}" method="post" action="{{ url_for('edit_word_page', word_id=word.id) }}"></form>
     <form id="delete-{{ word.id }}" method="post" action="{{ url_for('delete_word_page', word_id=word.id) }}"
-          onsubmit="return confirm('단어를 삭제하면 관련 학습 기록도 함께 삭제됩니다. 계속할까요?');"></form>
+          onsubmit="return confirm('단어를 삭제하면 모든 회원의 이 단어 학습 기록도 함께 삭제됩니다. 계속할까요?');"></form>
     <div class="word-row">
       <input form="edit-{{ word.id }}" name="english" value="{{ word.english }}" aria-label="영어" required>
       <input form="edit-{{ word.id }}" name="meaning" value="{{ word.meaning }}" aria-label="뜻" required>
