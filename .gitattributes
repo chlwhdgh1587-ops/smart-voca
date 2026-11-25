@@ -1,0 +1,4 @@
+# 2026-11-25 - 스마트보카 - 줄바꿈을 LF로 통일 (Dockerfile 구성 R-12, Windows 줄바꿈 문제 예방)
+# 파일 위치: .gitattributes
+
+* text=auto eol=lf

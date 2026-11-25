@@ -1,3 +1,5 @@
 # smart-voca runtime dependencies (Python 3.11)
 # Tests use only the standard library and do not need Flask.
 Flask>=3.0,<4.0
+# Production WSGI server for the Docker image (Dockerfile R-14)
+gunicorn>=22.0,<24.0

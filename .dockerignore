@@ -1,0 +1,19 @@
+# 2026-11-25 - 스마트보카 - 이미지에 넣지 않을 파일 (Dockerfile 구성 R-11)
+# 파일 위치: .dockerignore
+
+.git
+.gitignore
+.gitattributes
+.venv
+venv
+env
+node_modules
+__pycache__
+*.pyc
+*.db
+.env
+.vscode
+.idea
+ai-agent
+docs
+tests
