@@ -76,22 +76,27 @@ def _find_duplicate(conn, english, excluded_id=None):
     return row is not None
 
 
-def add_word(conn, english, meaning, example=None):
-    """단어를 등록한다. 학습 상태(word_state)는 그 계정이 처음 공부할 때 만든다 (FR-01.1)."""
-    normalized = normalize_english(english)
-    cleaned_meaning = _require_meaning(meaning)
+def _insert_word(conn, normalized, cleaned_meaning, cleaned_example):
+    """검증을 마친 단어를 넣는다. 커밋은 호출하는 쪽이 한다."""
     if _find_duplicate(conn, normalized):
         raise DuplicateWordError("이미 등록된 단어입니다.")
     created_at = datetime.now().isoformat(timespec="seconds")
     try:
-        with conn:
-            cursor = conn.execute(
-                "INSERT INTO word (english, meaning, example, created_at) VALUES (?, ?, ?, ?)",
-                (normalized, cleaned_meaning, _optional_example(example), created_at),
-            )
+        cursor = conn.execute(
+            "INSERT INTO word (english, meaning, example, created_at) VALUES (?, ?, ?, ?)",
+            (normalized, cleaned_meaning, cleaned_example, created_at),
+        )
     except sqlite3.IntegrityError as error:
         raise DuplicateWordError("이미 등록된 단어입니다.") from error
     return cursor.lastrowid
+
+
+def add_word(conn, english, meaning, example=None):
+    """단어를 등록한다. 학습 상태(word_state)는 그 계정이 처음 공부할 때 만든다 (FR-01.1)."""
+    normalized = normalize_english(english)
+    cleaned_meaning = _require_meaning(meaning)
+    with conn:
+        return _insert_word(conn, normalized, cleaned_meaning, _optional_example(example))
 
 
 def update_word(conn, word_id, english, meaning, example=None):
@@ -142,15 +147,17 @@ def import_words_csv(conn, raw_bytes):
     reader = csv.DictReader(io.StringIO(text))
     english_key, meaning_key, example_key = _map_headers(reader.fieldnames)
     result = {"added": 0, "duplicate": 0, "invalid": 0}
-    for row in reader:
-        english = row.get(english_key) or ""
-        meaning = row.get(meaning_key) or ""
-        example = row.get(example_key) if example_key else None
-        try:
-            add_word(conn, english, meaning, example)
-            result["added"] += 1
-        except DuplicateWordError:
-            result["duplicate"] += 1
-        except WordError:
-            result["invalid"] += 1
+    # 한 트랜잭션으로 묶는다. 행마다 커밋하면 2,000행에 10초 이상 걸린다.
+    with conn:
+        for row in reader:
+            try:
+                normalized = normalize_english(row.get(english_key))
+                cleaned_meaning = _require_meaning(row.get(meaning_key))
+                example = row.get(example_key) if example_key else None
+                _insert_word(conn, normalized, cleaned_meaning, _optional_example(example))
+                result["added"] += 1
+            except DuplicateWordError:
+                result["duplicate"] += 1
+            except WordError:
+                result["invalid"] += 1
     return result
