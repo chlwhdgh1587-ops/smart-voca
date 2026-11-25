@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>학습 기록</h1>
-<div class="summary-row">
-  <div class="stat">
-    <div class="stat-label">완벽 암기</div>
-    <div class="stat-value">{{ mastery.mastered }}<small> 개</small></div>
+<h1>{% if owner %}{{ owner }} 님의 학습 기록{% else %}학습 기록{% endif %}</h1>
+{% if owner %}<p class="muted">다른 회원의 기록입니다. 보기만 할 수 있습니다.</p>{% endif %}
+
+<section class="card">
+  <h2>진도 현황</h2>
+  <div class="summary-row">
+    <div class="stat">
+      <div class="stat-label">현재 일차</div>
+      <div class="stat-value">{{ progress.day_number }}<small> 일차</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">암기한 단어</div>
+      <div class="stat-value">{{ progress.mastered }}<small> / {{ progress.total }}</small></div>
+      <div class="progress-bar"><span style="width: {{ progress.percent }}%"></span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">복습 대기</div>
+      <div class="stat-value">{{ mastery.review_pending }}<small> 개</small></div>
+    </div>
   </div>
-  <div class="stat">
-    <div class="stat-label">복습 대기</div>
-    <div class="stat-value">{{ mastery.review_pending }}<small> 개</small></div>
-  </div>
-</div>
+</section>
 
 <section class="card">
   <h2>날짜별 학습량</h2>
@@ -18,12 +28,13 @@
   <div class="table-wrap">
     <table class="report-table">
       <thead>
-        <tr><th>날짜</th><th>학습 단어</th><th>문제 수</th><th>정답률</th></tr>
+        <tr><th>날짜</th><th>일차</th><th>학습 단어</th><th>문제 수</th><th>정답률</th></tr>
       </thead>
       <tbody>
         {% for row in daily %}
         <tr>
           <td>{{ row.date }}</td>
+          <td>{{ row.day if row.day else '-' }}</td>
           <td>{{ row.learned }}</td>
           <td>{{ row.attempts }}</td>
           <td>{% if row.rate is none %}-{% else %}{{ "%.1f"|format(row.rate) }} %{% endif %}</td>
@@ -34,6 +45,67 @@
   </div>
   {% else %}
   <p class="muted">아직 학습 기록이 없습니다. 첫 학습을 시작해 보세요.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>시험 성적 추이</h2>
+  {% if trend.sessions %}
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead>
+        <tr><th>날짜</th><th>회차</th><th>형식</th><th>방향</th><th>점수</th><th>정답률</th></tr>
+      </thead>
+      <tbody>
+        {% for row in trend.sessions %}
+        <tr>
+          <td>{{ row.date }}</td>
+          <td>{{ loop.index }}회</td>
+          <td>{{ {'choice': '4지선다', 'short': '단답형', 'ox': 'OX', 'mix': '섞기'}[row.form] }}</td>
+          <td>{{ {'en2ko': '영→한', 'ko2en': '한→영', 'mix': '섞기'}[row.direction] }}</td>
+          <td>{{ row.correct }} / {{ row.total }}</td>
+          <td>{{ "%.1f"|format(row.rate) }} %</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <h3>날짜별 정답률</h3>
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead><tr><th>날짜</th><th>시험 수</th><th>정답률</th></tr></thead>
+      <tbody>
+        {% for row in trend.daily %}
+        <tr><td>{{ row.date }}</td><td>{{ row.exams }}</td><td>{{ "%.1f"|format(row.rate) }} %</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">끝낸 시험이 없습니다. <a href="{{ url_for('exam_page') }}">시험 보기</a></p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>자주 틀리는 단어 (상위 10개)</h2>
+  {% if weak %}
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead><tr><th>영어</th><th>뜻</th><th>틀린 횟수</th><th>정답률</th></tr></thead>
+      <tbody>
+        {% for row in weak %}
+        <tr>
+          <td>{{ row.english }}</td>
+          <td>{{ row.meaning }}</td>
+          <td>{{ row.wrong }}</td>
+          <td>{% if row.rate is none %}-{% else %}{{ "%.1f"|format(row.rate) }} %{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">틀린 단어가 아직 없습니다.</p>
   {% endif %}
 </section>
 <a class="button" href="{{ url_for('home') }}">홈으로</a>

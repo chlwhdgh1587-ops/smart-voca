@@ -689,3 +689,33 @@ tr:last-child td {
     display: none;
   }
 }
+
+/* 2026-11-25 추가: 로그인 상태 표시, 체크박스 라벨, 보기 전용 표시 */
+.logout-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.logout-form .who {
+  font-size: 14px;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 4px 6px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.word-form label.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

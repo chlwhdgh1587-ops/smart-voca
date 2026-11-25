@@ -2,7 +2,7 @@
 {% block content %}
 <section class="hero">
   <p>오늘도 한 단계씩, TOEIC 단어</p>
-  <h1>오늘의 학습</h1>
+  <h1>오늘의 학습 · {{ status.day_number }}일차</h1>
   {% if status.can_study %}
     <a class="button primary large" href="{{ url_for('study') }}">학습 시작 →</a>
   {% else %}
@@ -31,4 +31,5 @@
     <div class="progress-bar"><span style="width: {{ percent }}%"></span></div>
   </div>
 </div>
+<p class="muted"><a href="{{ url_for('cards_page') }}">오늘의 카드 암기</a> · <a href="{{ url_for('exam_page') }}">시험 보기</a></p>
 {% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card study">
+  <p class="progress">{{ item.number }} / {{ item.total }} · {{ '영어 → 뜻' if item.direction == 'en2ko' else '뜻 → 영어' }}</p>
+  {% if item.direction == 'en2ko' %}
+    <p class="muted">다음 영단어의 뜻은?</p>
+  {% else %}
+    <p class="muted">다음 뜻에 맞는 영단어는?</p>
+  {% endif %}
+  <div class="english">{{ item.prompt }}</div>
+
+  {% if item.form == 'choice' %}
+    <form method="post" action="{{ url_for('exam_answer', exam_id=exam_id) }}" class="choices">
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      {% for option in item.options %}
+        <button type="submit" name="answer" value="{{ option }}" class="choice">{{ option }}</button>
+      {% endfor %}
+    </form>
+
+  {% elif item.form == 'short' %}
+    <form method="post" action="{{ url_for('exam_answer', exam_id=exam_id) }}" class="word-form">
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <label>정답 입력<input name="answer" autocomplete="off" autofocus required></label>
+      <button type="submit" class="button primary">확인</button>
+    </form>
+
+  {% else %}
+    <p class="muted">제시된 {{ '뜻' if item.direction == 'en2ko' else '영어' }}이 맞으면 O, 틀리면 X</p>
+    <p class="example">{{ item.options[0] }}</p>
+    <form method="post" action="{{ url_for('exam_answer', exam_id=exam_id) }}" class="study-actions">
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <button type="submit" name="answer" value="O" class="button primary large">O</button>
+      <button type="submit" name="answer" value="X" class="button large">X</button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>설정</h1>
+<section class="card">
+  <h2>학습과 시험 설정</h2>
+  <form method="post" action="{{ url_for('settings_page') }}" class="word-form">
+    <label>하루 신규 단어 수 ({{ daily_range[0] }}~{{ daily_range[1] }})
+      <input type="number" name="daily_target" min="{{ daily_range[0] }}" max="{{ daily_range[1] }}" value="{{ values.daily_target }}" required>
+    </label>
+    <label>복습 비율
+      <select name="review_ratio">
+        {% for ratio in review_ratios %}
+          <option value="{{ ratio }}" {% if ratio == values.review_ratio %}selected{% endif %}>{{ ratio }}%{{ ' (전부)' if ratio == 100 else ' (절반)' }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>시험 문제 수
+      <select name="exam_count">
+        {% for option in exam_counts %}
+          <option value="{{ option }}" {% if option == values.exam_count %}selected{% endif %}>{{ option }}문제</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>시험 출제 방향
+      <select name="exam_direction">
+        <option value="en2ko" {% if values.exam_direction == 'en2ko' %}selected{% endif %}>영어 → 뜻</option>
+        <option value="ko2en" {% if values.exam_direction == 'ko2en' %}selected{% endif %}>뜻 → 영어</option>
+        <option value="mix" {% if values.exam_direction == 'mix' %}selected{% endif %}>섞기</option>
+      </select>
+    </label>
+    <label>시험 출제 형식
+      <select name="exam_form">
+        <option value="choice" {% if values.exam_form == 'choice' %}selected{% endif %}>4지선다</option>
+        <option value="short" {% if values.exam_form == 'short' %}selected{% endif %}>단답형</option>
+        <option value="ox" {% if values.exam_form == 'ox' %}selected{% endif %}>OX</option>
+        <option value="mix" {% if values.exam_form == 'mix' %}selected{% endif %}>섞기</option>
+      </select>
+    </label>
+    <label class="check">
+      <input type="checkbox" name="is_public" {% if is_public %}checked{% endif %}>
+      내 학습 기록을 다른 회원에게 공개합니다 (보기만 가능)
+    </label>
+    <button type="submit" class="button primary">설정 저장</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>오늘의 카드 암기</h1>
+{% if words %}
+<section class="card study" id="card-viewer" data-total="{{ words|length }}">
+  <p class="progress"><span id="card-index">1</span> / {{ words|length }}</p>
+  <div class="english" id="card-english"></div>
+  <p class="muted" id="card-meaning" hidden></p>
+  <p class="example" id="card-example" hidden></p>
+  <div class="study-actions">
+    <button type="button" class="button" id="card-reveal">뜻 보기</button>
+    <button type="button" class="button primary" id="card-next">다음 →</button>
+  </div>
+</section>
+<p class="muted">카드 암기는 기록에 남지 않습니다. 실제 학습은 <a href="{{ url_for('study') }}">학습</a>에서 합니다.</p>
+<script>
+  const cards = {{ words|tojson }};
+  let index = 0;
+  const englishEl = document.getElementById('card-english');
+  const meaningEl = document.getElementById('card-meaning');
+  const exampleEl = document.getElementById('card-example');
+  const indexEl = document.getElementById('card-index');
+  const revealBtn = document.getElementById('card-reveal');
+  const nextBtn = document.getElementById('card-next');
+
+  function showCard() {
+    const card = cards[index];
+    indexEl.textContent = index + 1;
+    englishEl.textContent = card.english;
+    meaningEl.textContent = card.meaning;
+    exampleEl.textContent = card.example || '';
+    meaningEl.hidden = true;
+    exampleEl.hidden = true;
+    revealBtn.disabled = false;
+    nextBtn.textContent = index === cards.length - 1 ? '처음으로 ↺' : '다음 →';
+  }
+
+  revealBtn.addEventListener('click', () => {
+    meaningEl.hidden = false;
+    exampleEl.hidden = !cards[index].example;
+    revealBtn.disabled = true;
+  });
+
+  nextBtn.addEventListener('click', () => {
+    index = (index + 1) % cards.length;
+    showCard();
+  });
+
+  showCard();
+</script>
+{% else %}
+<p class="notice">오늘 암기할 단어가 없습니다. 단어를 등록하거나 학습 설정을 확인하세요.</p>
+{% endif %}
+{% endblock %}

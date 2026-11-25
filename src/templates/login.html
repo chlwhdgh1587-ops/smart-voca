@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>로그인</h1>
+  <form method="post" action="{{ url_for('login_page') }}" class="word-form">
+    <label>아이디<input name="username" autocomplete="username" required></label>
+    <label>비밀번호<input type="password" name="password" autocomplete="current-password" required></label>
+    <button type="submit" class="button primary">로그인</button>
+  </form>
+  <p class="muted">계정이 없으면 <a href="{{ url_for('signup_page') }}">회원 가입</a>을 하세요.</p>
+</section>
+{% endblock %}

@@ -20,16 +20,12 @@ class WordServiceTest(unittest.TestCase):
     def tearDown(self):
         self.conn.close()
 
-    def test_add_word_normalizes_english_and_creates_state(self):
-        # FR-01.1: 영어는 소문자와 공백 제거로 정규화, 학습 상태 행도 함께 생성
+    def test_add_word_normalizes_english_without_learning_state(self):
+        # FR-01.1: 영어는 소문자와 공백 제거로 정규화. 학습 상태는 공부를 시작할 때 만든다
         word_id = word_service.add_word(self.conn, "  Apple ", "사과")
         word = word_service.get_word(self.conn, word_id)
-        state = self.conn.execute(
-            "SELECT consecutive_correct, in_review FROM word_state WHERE word_id = ?", (word_id,)
-        ).fetchone()
         self.assertEqual(word["english"], "apple")
-        self.assertEqual(state["consecutive_correct"], 0)
-        self.assertEqual(state["in_review"], 0)
+        self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM word_state").fetchone()[0], 0)
 
     def test_duplicate_english_is_rejected_ignoring_case(self):
         # FR-01.1: 같은 영어 단어는 한 번만 등록된다
@@ -44,7 +40,7 @@ class WordServiceTest(unittest.TestCase):
     def test_update_keeps_learning_state(self):
         # FR-01.2: 수정해도 학습 상태는 유지된다
         word_id = word_service.add_word(self.conn, "apple", "사과")
-        self.conn.execute("UPDATE word_state SET consecutive_correct = 2 WHERE word_id = ?", (word_id,))
+        self.conn.execute("INSERT INTO word_state (user_id, word_id, consecutive_correct) VALUES (1, ?, 2)", (word_id,))
         self.conn.commit()
         word_service.update_word(self.conn, word_id, "apple", "사과 (과일)", "An apple a day.")
         state = self.conn.execute(
@@ -57,11 +53,15 @@ class WordServiceTest(unittest.TestCase):
         # FR-01.3: 삭제하면 학습 상태와 답안 기록도 함께 삭제된다
         word_id = word_service.add_word(self.conn, "apple", "사과")
         self.conn.execute(
-            "INSERT INTO study_session (session_date, started_at, new_target) VALUES ('2026-10-21', 'x', 20)"
+            "INSERT INTO study_session (user_id, session_date, started_at, new_target) VALUES (1, '2026-10-21', 'x', 20)"
         )
         self.conn.execute(
-            "INSERT INTO attempt (session_id, word_id, block, selected_meaning, is_correct, attempted_at) "
-            "VALUES (1, ?, 'new', '사과', 1, '2026-10-21T10:00:00')",
+            "INSERT INTO word_state (user_id, word_id, consecutive_correct) VALUES (1, ?, 1)",
+            (word_id,),
+        )
+        self.conn.execute(
+            "INSERT INTO attempt (session_id, user_id, word_id, block, selected_meaning, is_correct, attempted_at) "
+            "VALUES (1, 1, ?, 'new', '사과', 1, '2026-10-21T10:00:00')",
             (word_id,),
         )
         self.conn.commit()

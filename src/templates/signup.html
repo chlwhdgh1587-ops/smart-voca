@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>회원 가입</h1>
+  <form method="post" action="{{ url_for('signup_page') }}" class="word-form">
+    <label>아이디 (영문 소문자, 숫자, _ · 3~20자)<input name="username" autocomplete="username" pattern="[a-z0-9_]{3,20}" required></label>
+    <label>비밀번호 (8자 이상)<input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+    <label>비밀번호 확인<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required></label>
+    <button type="submit" class="button primary">가입하기</button>
+  </form>
+  <p class="muted">이미 계정이 있으면 <a href="{{ url_for('login_page') }}">로그인</a>하세요. 비밀번호는 해시로 저장되고 원문은 남지 않습니다.</p>
+</section>
+{% endblock %}

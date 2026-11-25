@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>다른 사용자의 학습 기록</h1>
+<p class="muted">공개로 설정한 회원만 보입니다. 다른 사람의 기록은 보기만 할 수 있습니다.</p>
+<section class="card">
+  {% if rows %}
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead><tr><th>아이디</th><th>현재 일차</th><th>암기한 단어</th><th>기록</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.username }}{% if row.id == me %} (나){% endif %}</td>
+          <td>{{ row.progress.day_number }} 일차</td>
+          <td>{{ row.progress.mastered }} / {{ row.progress.total }}</td>
+          <td><a href="{{ url_for('user_report_page', user_id=row.id) }}">보기</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">공개한 회원이 아직 없습니다. 설정에서 공개할 수 있습니다.</p>
+  {% endif %}
+</section>
+{% endblock %}

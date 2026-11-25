@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>시험</h1>
+
+{% if unfinished_id %}
+<p class="notice">끝나지 않은 시험이 있습니다. <a href="{{ url_for('exam_play', exam_id=unfinished_id) }}">이어서 풀기 →</a></p>
+{% endif %}
+
+<section class="card">
+  <h2>시험 설정</h2>
+  <form method="post" action="{{ url_for('exam_start') }}" class="word-form">
+    <label>문제 수
+      <select name="count">
+        {% for option in count_options %}
+          <option value="{{ option }}" {% if option == defaults.exam_count %}selected{% endif %}>{{ option }}문제</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>출제 방향
+      <select name="direction">
+        <option value="en2ko" {% if defaults.exam_direction == 'en2ko' %}selected{% endif %}>영어 → 뜻</option>
+        <option value="ko2en" {% if defaults.exam_direction == 'ko2en' %}selected{% endif %}>뜻 → 영어</option>
+        <option value="mix" {% if defaults.exam_direction == 'mix' %}selected{% endif %}>섞기</option>
+      </select>
+    </label>
+    <label>출제 형식
+      <select name="form">
+        <option value="choice" {% if defaults.exam_form == 'choice' %}selected{% endif %}>4지선다</option>
+        <option value="short" {% if defaults.exam_form == 'short' %}selected{% endif %}>단답형</option>
+        <option value="ox" {% if defaults.exam_form == 'ox' %}selected{% endif %}>OX</option>
+        <option value="mix" {% if defaults.exam_form == 'mix' %}selected{% endif %}>섞기</option>
+      </select>
+    </label>
+    <button type="submit" class="button primary">시험 시작</button>
+  </form>
+  <p class="muted">시험 본 적 없는 단어, 자주 틀린 단어, 오래 전에 본 단어가 더 자주 나옵니다.</p>
+</section>
+{% endblock %}

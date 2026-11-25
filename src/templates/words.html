@@ -13,8 +13,22 @@
 </section>
 
 <section class="card">
+  <h2>CSV 가져오기</h2>
+  <p class="muted">첫 줄은 <code>english,meaning</code> (예문 열 <code>example</code>은 선택). UTF-8 파일만 됩니다. 이미 있는 영어 단어는 건너뜁니다.</p>
+  <form method="post" action="{{ url_for('import_words_page') }}" enctype="multipart/form-data" class="word-form">
+    <label>CSV 파일<input type="file" name="csv_file" accept=".csv,text/csv" required></label>
+    <button type="submit" class="button primary">가져오기</button>
+  </form>
+</section>
+
+<section class="card">
   <h2>단어 목록</h2>
-  <p class="word-count">총 {{ words|length }}개</p>
+  <form method="get" action="{{ url_for('words_page') }}" class="word-form">
+    <label>검색 (영어 또는 뜻)<input name="q" value="{{ query }}" placeholder="예: approve, 승인"></label>
+    <button type="submit" class="button">검색</button>
+    {% if query %}<a class="button" href="{{ url_for('words_page') }}">전체 보기</a>{% endif %}
+  </form>
+  <p class="word-count">{% if query %}"{{ query }}" 검색 결과 {{ words|length }}개{% else %}총 {{ words|length }}개{% endif %}</p>
 
   <div class="word-list-head">
     <span>영어</span><span>뜻</span><span>예문</span><span></span>
@@ -36,7 +50,7 @@
     </div>
   </div>
   {% else %}
-  <p class="muted">등록된 단어가 없습니다.</p>
+  <p class="muted">{% if query %}검색 결과가 없습니다.{% else %}등록된 단어가 없습니다.{% endif %}</p>
   {% endfor %}
 </section>
 {% endblock %}

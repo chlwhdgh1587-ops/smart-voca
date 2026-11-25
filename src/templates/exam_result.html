@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card done">
+  <div class="emoji">📝</div>
+  <h1>시험 결과</h1>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">점수</div>
+      <div class="stat-value">{{ result.correct }}<small> / {{ result.total }}</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">정답률</div>
+      <div class="stat-value">{% if result.rate is none %}-{% else %}{{ "%.1f"|format(result.rate) }}<small> %</small>{% endif %}</div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>틀린 문항</h2>
+  {% if result.wrong_items %}
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead><tr><th>문제</th><th>내 답</th><th>정답</th></tr></thead>
+      <tbody>
+        {% for item in result.wrong_items %}
+        <tr>
+          <td>{{ item.prompt }}</td>
+          <td>{{ item.selected_answer or '(무응답)' }}</td>
+          <td>{{ item.correct_answer }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">모두 맞혔습니다.</p>
+  {% endif %}
+</section>
+<a class="button primary" href="{{ url_for('exam_page') }}">다시 시험 보기</a>
+<a class="button" href="{{ url_for('report_page') }}">학습 기록 보기</a>
+{% endblock %}

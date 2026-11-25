@@ -23,6 +23,7 @@ WORDS = [
 ]
 DAY1 = "2026-10-21"
 DAY2 = "2026-10-22"
+USER = 1  # 계정 기능 전 단일 사용자 (기존 기록의 주인)
 
 
 class StudyServiceTest(unittest.TestCase):
@@ -55,8 +56,7 @@ class StudyServiceTest(unittest.TestCase):
             question = study_service.current_question(self.conn, active, self.rng)
             if question is None:
                 return
-            result = study_service.submit_answer(
-                self.conn, question["word_id"], question["correct_meaning"], today
+            result = study_service.submit_answer(self.conn, USER, question["word_id"], question["correct_meaning"], today
             )
             self.assertTrue(result["correct"])
             if result["session_finished"]:
@@ -66,19 +66,19 @@ class StudyServiceTest(unittest.TestCase):
         # FR-02.2: 보기 4개를 만들 수 없으면 학습을 시작하지 않는다 (ADR-004)
         self.add_words(WORDS[:3])
         with self.assertRaises(study_service.StudyError):
-            study_service.resume_or_start_session(self.conn, DAY1)
+            study_service.resume_or_start_session(self.conn, USER, DAY1)
 
     def test_start_requires_four_distinct_meanings(self):
         # ADR-004: 뜻이 같은 단어만 4개면 보기를 만들 수 없으므로 시작하지 않는다
         for english in ["apple", "pear", "melon", "peach"]:
             word_service.add_word(self.conn, english, "과일")
         with self.assertRaises(study_service.StudyError):
-            study_service.resume_or_start_session(self.conn, DAY1)
+            study_service.resume_or_start_session(self.conn, USER, DAY1)
 
     def test_new_block_takes_words_in_registration_order(self):
         # FR-02.1: 미출제 신규 단어를 등록 순서대로 고른다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.assertEqual(len(active.blocks), 1)
         self.assertEqual(active.blocks[0].name, study_service.BLOCK_NEW)
         expected = [self.word_id(english) for english, _ in WORDS]
@@ -88,13 +88,13 @@ class StudyServiceTest(unittest.TestCase):
         # FR-02: 하루 신규 목표는 20개
         words = [(f"word{index:02d}", f"뜻{index:02d}") for index in range(25)]
         self.add_words(words)
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.assertEqual(len(active.blocks[0].queue), study_service.DAILY_NEW_TARGET)
 
     def test_question_has_four_options_with_correct_meaning(self):
         # FR-02.2: 보기 4개, 정답 1 + 오답 3, 정답은 다른 단어의 뜻이 아니다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         question = study_service.current_question(self.conn, active, self.rng)
         self.assertEqual(len(question["options"]), 4)
         self.assertIn(question["correct_meaning"], question["options"])
@@ -103,10 +103,10 @@ class StudyServiceTest(unittest.TestCase):
     def test_wrong_answer_is_requeued_and_resets_streak(self):
         # FR-02.3, FR-02.4: 틀리면 같은 블록 끝에 다시 출제되고 연속 정답 수가 0이 된다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         question = study_service.current_question(self.conn, active, self.rng)
         wrong = next(option for option in question["options"] if option != question["correct_meaning"])
-        result = study_service.submit_answer(self.conn, question["word_id"], wrong, DAY1)
+        result = study_service.submit_answer(self.conn, USER, question["word_id"], wrong, DAY1)
         self.assertFalse(result["correct"])
         self.assertEqual(active.blocks[0].queue[-1], question["word_id"])
         self.assertEqual(self.state(question["english"])["consecutive_correct"], 0)
@@ -114,19 +114,19 @@ class StudyServiceTest(unittest.TestCase):
     def test_new_block_correct_answer_is_not_repeated(self):
         # FR-02.3: 신규 블록에서 맞힌 단어는 같은 세션에서 다시 나오지 않는다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         question = study_service.current_question(self.conn, active, self.rng)
-        study_service.submit_answer(self.conn, question["word_id"], question["correct_meaning"], DAY1)
+        study_service.submit_answer(self.conn, USER, question["word_id"], question["correct_meaning"], DAY1)
         self.assertNotIn(question["word_id"], active.blocks[0].queue)
 
     def test_review_block_repeats_until_three_in_a_row(self):
         # FR-03.2: 복습 블록에서는 연속 3회 정답에 도달할 때까지 반복한다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.answer_all_correctly(active, DAY1)
         self.assertEqual(self.state("apple")["consecutive_correct"], 1)
 
-        active = study_service.resume_or_start_session(self.conn, DAY2)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY2)
         self.assertEqual(active.blocks[0].name, study_service.BLOCK_REVIEW)
         self.answer_all_correctly(active, DAY2)
 
@@ -136,17 +136,16 @@ class StudyServiceTest(unittest.TestCase):
     def test_review_answer_flags_continue_until_third_in_a_row(self):
         # FR-03.2: 복습 블록에서 맞혀도 연속 3회 전까지는 안내 플래그가 켜진다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.answer_all_correctly(active, DAY1)
-        active = study_service.resume_or_start_session(self.conn, DAY2)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY2)
         block_done_flags = []
         while True:
             question = study_service.current_question(self.conn, active, self.rng)
             if question is None:
                 break
             streak_before = self.state(question["english"])["consecutive_correct"]
-            result = study_service.submit_answer(
-                self.conn, question["word_id"], question["correct_meaning"], DAY2
+            result = study_service.submit_answer(self.conn, USER, question["word_id"], question["correct_meaning"], DAY2
             )
             self.assertEqual(result["review_continues"], streak_before + 1 < study_service.MASTERY_STREAK)
             block_done_flags.append(result["review_block_done"])
@@ -159,18 +158,18 @@ class StudyServiceTest(unittest.TestCase):
     def test_new_block_answer_has_no_review_flag(self):
         # 신규 블록에서는 복습 안내와 복습 완료 플래그가 켜지지 않는다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         question = study_service.current_question(self.conn, active, self.rng)
-        result = study_service.submit_answer(self.conn, question["word_id"], question["correct_meaning"], DAY1)
+        result = study_service.submit_answer(self.conn, USER, question["word_id"], question["correct_meaning"], DAY1)
         self.assertFalse(result["review_continues"])
         self.assertFalse(result["review_block_done"])
 
     def test_review_targets_are_released_after_review_block(self):
         # FR-03.3: 복습 블록이 끝나면 복습 대상에서 해제된다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.answer_all_correctly(active, DAY1)
-        active = study_service.resume_or_start_session(self.conn, DAY2)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY2)
         self.answer_all_correctly(active, DAY2)
         for english, _ in WORDS:
             self.assertEqual(self.state(english)["in_review"], 0)
@@ -178,22 +177,22 @@ class StudyServiceTest(unittest.TestCase):
     def test_same_day_restart_does_not_repeat_finished_words(self):
         # 같은 날 세션을 끝낸 뒤 다시 시작하면 신규 단어는 이미 출제되어 나오지 않는다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.answer_all_correctly(active, DAY1)
         study_service.reset_state()
-        self.assertIsNone(study_service.resume_or_start_session(self.conn, DAY1))
+        self.assertIsNone(study_service.resume_or_start_session(self.conn, USER, DAY1))
 
     def test_restart_closes_unfinished_session_and_keeps_review_targets(self):
         # 프로세스 설계서 1절, 4절 3항: 미완료 세션은 닫고 복습 대상은 유지한다
         self.add_words()
-        active = study_service.resume_or_start_session(self.conn, DAY1)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY1)
         self.answer_all_correctly(active, DAY1)
-        active = study_service.resume_or_start_session(self.conn, DAY2)
+        active = study_service.resume_or_start_session(self.conn, USER, DAY2)
         question = study_service.current_question(self.conn, active, self.rng)
-        study_service.submit_answer(self.conn, question["word_id"], question["correct_meaning"], DAY2)
+        study_service.submit_answer(self.conn, USER, question["word_id"], question["correct_meaning"], DAY2)
         answered_english = question["english"]
         study_service.reset_state()
-        restarted = study_service.resume_or_start_session(self.conn, DAY2)
+        restarted = study_service.resume_or_start_session(self.conn, USER, DAY2)
         self.assertNotEqual(restarted.session_id, active.session_id)
         unfinished = self.conn.execute(
             "SELECT COUNT(*) FROM study_session WHERE finished_at IS NULL"
