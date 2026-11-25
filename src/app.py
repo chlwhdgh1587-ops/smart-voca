@@ -6,6 +6,7 @@
 # 실행: python src/app.py  →  http://127.0.0.1:5000
 
 import os
+import secrets
 from datetime import date
 
 from flask import Flask, flash, g, current_app, jsonify, redirect, render_template, request, url_for
@@ -29,8 +30,10 @@ def today_string():
 
 def create_app(db_path=None):
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = os.environ.get("SMARTVOCA_SECRET_KEY", "smartvoca-local-only")
-    app.config["DB_PATH"] = db_path
+    # 세션 키는 환경변수 SECRET_KEY로 받는다. 없으면 기동할 때 무작위로 만든다 (코드·이미지에 비밀값을 두지 않는다).
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+    # DB 위치: 인자 > 환경변수 DB_PATH > 기본값 data/smartvoca.db. 서버에서는 DB_PATH=/data/voca.db.
+    app.config["DB_PATH"] = db_path or os.environ.get("DB_PATH")
 
     @app.teardown_appcontext
     def close_db(_error):
