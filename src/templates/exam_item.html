@@ -25,7 +25,7 @@
     </form>
 
   {% else %}
-    <p class="muted">제시된 {{ '뜻' if item.direction == 'en2ko' else '영어' }}이 맞으면 O, 틀리면 X</p>
+    <p class="muted">제시된 단어가 맞으면 O, 틀리면 X</p>
     <p class="example">{{ item.options[0] }}</p>
     <form method="post" action="{{ url_for('exam_answer', exam_id=exam_id) }}" class="study-actions">
       <input type="hidden" name="item_id" value="{{ item.id }}">
